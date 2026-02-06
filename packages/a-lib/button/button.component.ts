@@ -9,10 +9,12 @@ import {
     Pipe,
     PipeTransform,
     TemplateRef,
+    inject,
     input,
     model,
     output,
 } from '@angular/core';
+import { AliButtonService } from './button.service';
 
 @Directive()
 class Base {
@@ -22,6 +24,7 @@ class Base {
      */
     @Input() alibDisabled!: boolean;
 }
+
 /**
  * General Button Component description.
  * @name alib-button
@@ -88,11 +91,15 @@ export class AlibButtonComponent extends Base implements OnInit {
 
     @ContentChild('template') templateRef!: TemplateRef<unknown>;
 
+    private aliButtonService = inject(AliButtonService);
+
     constructor(private elementRef: ElementRef<HTMLElement>) {
         super();
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        console.log('验证：', this.aliButtonService.getConfig());
+    }
 
     /**
      * Disable Button
