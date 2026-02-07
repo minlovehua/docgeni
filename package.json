@@ -47,7 +47,7 @@
     "build-styles": "cpx \"./packages/template/src/**/*.scss\" ./dist/template && sass ./packages/template/src/styles/index.scss >> dist/template/styles/index.css",
     "pretty": "pretty-quick --staged",
     "prettier": "prettier . --write",
-    "install-examples": "cd examples/full && npm i && cd ../lite && npm i && cd ../../",
+    "install-examples": "cd examples/full && yarn install && cd ../lite && yarn install && cd ../../",
     "prepare": "husky"
   },
   "private": true,
