@@ -20,7 +20,10 @@
 //    md
 @function dg-breakpoint-next($name, $breakpoints: variables.$dg-grid-breakpoints, $breakpoint-names: map.keys($breakpoints)) {
     $n: list.index($breakpoint-names, $name);
-    @return if($n != null and $n < list.length($breakpoint-names), list.nth($breakpoint-names, $n + 1), null);
+    @if $n != null and $n < list.length($breakpoint-names) {
+        @return list.nth($breakpoint-names, $n + 1);
+    }
+    @return null;
 }
 
 // Minimum breakpoint width. Null for the smallest (first) breakpoint.
@@ -29,7 +32,10 @@
 //    576px
 @function dg-breakpoint-min($name, $breakpoints: variables.$dg-grid-breakpoints) {
     $min: map.get($breakpoints, $name);
-    @return if($min != 0, $min, null);
+    @if $min != 0 {
+        @return $min;
+    }
+    @return null;
 }
 
 // Maximum breakpoint width. Null for the largest (last) breakpoint.
@@ -43,7 +49,10 @@
 //    767.98px
 @function dg-breakpoint-max($name, $breakpoints: variables.$dg-grid-breakpoints) {
     $next: dg-breakpoint-next($name, $breakpoints);
-    @return if($next, dg-breakpoint-min($next, $breakpoints) - 0.02, null);
+    @if $next {
+        @return dg-breakpoint-min($next, $breakpoints) - 0.02;
+    }
+    @return null;
 }
 
 // Returns a blank string if smallest breakpoint, otherwise returns the name with a dash in front.
@@ -54,7 +63,10 @@
 //    >> breakpoint-infix(sm, (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px))
 //    "-sm"
 @function dg-breakpoint-infix($name, $breakpoints: variables.$dg-grid-breakpoints) {
-    @return if(dg-breakpoint-min($name, $breakpoints) == null, '', '-#{$name}');
+    @if dg-breakpoint-min($name, $breakpoints) == null {
+        @return '';
+    }
+    @return '-#{$name}';
 }
 
 // Media of at least the minimum breakpoint width. No query for the smallest breakpoint.
@@ -108,19 +120,19 @@
 // No minimum for the smallest breakpoint, and no maximum for the largest one.
 // Makes the @content apply only to the given breakpoint, not viewports any wider or narrower.
 @mixin dg-media-breakpoint-only($name, $breakpoints: variables.$dg-grid-breakpoints) {
-    $min: breakpoint-min($name, $breakpoints);
-    $max: breakpoint-max($name, $breakpoints);
+    $min: dg-breakpoint-min($name, $breakpoints);
+    $max: dg-breakpoint-max($name, $breakpoints);
 
     @if $min != null and $max != null {
         @media (min-width: $min) and (max-width: $max) {
             @content;
         }
     } @else if $max == null {
-        @include media-breakpoint-up($name, $breakpoints) {
+        @include dg-media-breakpoint-up($name, $breakpoints) {
             @content;
         }
     } @else if $min == null {
-        @include media-breakpoint-down($name, $breakpoints) {
+        @include dg-media-breakpoint-down($name, $breakpoints) {
             @content;
         }
     }
