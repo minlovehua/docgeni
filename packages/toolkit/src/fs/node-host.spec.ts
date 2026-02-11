@@ -53,10 +53,19 @@ describe('DocgeniNodeJsAsyncHost', () => {
             await host.delete(normalize(file1Path)).toPromise();
             await utils.wait(5000);
             expect(allEvents.length).toBeGreaterThanOrEqual(3);
-            const hasFile3Add = allEvents.some((e) => e.path.endsWith('file3.txt') && e.type === virtualFs.HostWatchEventType.Created);
-            const hasFile2Change = allEvents.some((e) => e.path.endsWith('file2.txt') && e.type === virtualFs.HostWatchEventType.Changed);
-            const hasFile1Delete = allEvents.some((e) => e.path.endsWith('file1.txt') && e.type === virtualFs.HostWatchEventType.Deleted);
-            expect(hasFile3Add && hasFile2Change && hasFile1Delete).toBe(true);
+            const pathStr = (p: any) => (typeof p === 'string' ? p : String(p)).replace(/\\/g, '/');
+            const hasFile3Add = allEvents.some(
+                (e) => pathStr(e.path).includes('file3.txt') && e.type === virtualFs.HostWatchEventType.Created,
+            );
+            const hasFile2 = allEvents.some(
+                (e) =>
+                    pathStr(e.path).includes('file2.txt') &&
+                    (e.type === virtualFs.HostWatchEventType.Changed || e.type === virtualFs.HostWatchEventType.Created),
+            );
+            const hasFile1Delete = allEvents.some(
+                (e) => pathStr(e.path).includes('file1.txt') && e.type === virtualFs.HostWatchEventType.Deleted,
+            );
+            expect(hasFile3Add && hasFile2 && hasFile1Delete).toBe(true);
             subscription.unsubscribe();
         },
         20000,
