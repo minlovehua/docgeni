@@ -1,4 +1,4 @@
-import { Component, OnInit, HostBinding, input } from '@angular/core';
+import { Component, OnInit, input } from '@angular/core';
 import { ComponentDocItem } from '../../interfaces/public-api';
 
 @Component({

@@ -1,5 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, OnInit, viewChild } from '@angular/core';
 import { ContentRenderer } from '../content-renderer';
 
 @Component({
@@ -11,20 +10,24 @@ import { ContentRenderer } from '../content-renderer';
     standalone: false,
 })
 export class SourceCodeComponent extends ContentRenderer implements OnInit {
-    @ViewChild('codeContent', { static: true, read: ElementRef }) codeContent!: ElementRef;
+    codeContent = viewChild('codeContent', { read: ElementRef });
 
-    get textContent() {
-        return this.codeContent.nativeElement?.textContent;
-    }
+    textContent = computed(() => {
+        return this.codeContent()?.nativeElement?.textContent;
+    });
 
     ngOnInit(): void {}
 
     updateDocument(content: string): void {
-        this.codeContent.nativeElement.innerHTML = content;
+        if (this.codeContent() && this.codeContent()?.nativeElement) {
+            this.codeContent()!.nativeElement.innerHTML = content;
+        }
     }
 
     showError(url: string, error: any): void {
         console.log(error);
-        this.codeContent.nativeElement.innerText = `Failed to load document: ${url}. Error: ${error.statusText}`;
+        if (this.textContent() && this.textContent().nativeElement) {
+            this.codeContent()!.nativeElement.innerText = `Failed to load document: ${url}. Error: ${error.statusText}`;
+        }
     }
 }

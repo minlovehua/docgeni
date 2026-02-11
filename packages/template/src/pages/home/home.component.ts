@@ -1,4 +1,4 @@
-import { Component, OnInit, HostBinding, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { GlobalContext, NavigationService } from '../../services/public-api';
 import { Router } from '@angular/router';
 import { PageTitleService } from '../../services/page-title.service';
@@ -13,7 +13,12 @@ import { TranslatePipe } from '../../shared/pipes/translate.pipe';
     },
     standalone: false,
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
+    public global = inject(GlobalContext);
+    router = inject(Router);
+    navigationService = inject(NavigationService);
+    pageTitle = inject(PageTitleService);
+
     hasHome = false;
 
     get bannerImgSrc() {
@@ -46,33 +51,27 @@ export class HomeComponent implements OnInit {
         return false;
     }
 
-    constructor(
-        public global: GlobalContext,
-        router: Router,
-        navigationService: NavigationService,
-        pageTitle: PageTitleService,
-    ) {
-        if (!global.homeMeta) {
-            if (global.config.mode === 'full') {
-                const channels = navigationService.getChannels();
+    constructor() {
+        if (!this.global.homeMeta) {
+            if (this.global.config.mode === 'full') {
+                const channels = this.navigationService.getChannels();
+
                 if (channels && channels[0].path && !channels[0].isExternal) {
-                    router.navigateByUrl(channels[0].path, {
+                    this.router.navigateByUrl(channels[0].path, {
                         replaceUrl: true,
                     });
                 }
             } else {
-                const docItem = navigationService.searchFirstDocItem();
+                const docItem = this.navigationService.searchFirstDocItem();
                 if (docItem) {
-                    router.navigateByUrl(docItem.path, {
+                    this.router.navigateByUrl(docItem.path, {
                         replaceUrl: true,
                     });
                 }
             }
             return;
         }
-        pageTitle.title = new TranslatePipe(global).transform('HOME');
+        this.pageTitle.title = new TranslatePipe(this.global).transform('HOME');
         this.hasHome = true;
     }
-
-    ngOnInit(): void {}
 }

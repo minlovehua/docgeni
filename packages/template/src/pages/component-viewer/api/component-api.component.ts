@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, NgZone, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, ElementRef, inject, signal } from '@angular/core';
 import { ComponentViewerComponent } from '../component-viewer.component';
 import { GlobalContext } from '../../../services/public-api';
 import { ApiDeclaration } from '../../../interfaces';
-import { take } from 'rxjs/operators';
 import { TocService } from '../../../services/toc.service';
 
 @Component({
@@ -16,11 +15,10 @@ import { TocService } from '../../../services/toc.service';
     standalone: false,
 })
 export class ComponentApiComponent implements OnInit {
-    apiDeclarations!: ApiDeclaration[];
+    apiDeclarations = signal<ApiDeclaration[] | undefined>(undefined);
     componentViewer = inject(ComponentViewerComponent);
     private global: GlobalContext = inject(GlobalContext);
     private http: HttpClient = inject(HttpClient);
-    private ngZone: NgZone = inject(NgZone);
     private elementRef: ElementRef = inject(ElementRef);
     private tocService: TocService = inject(TocService);
 
@@ -35,14 +33,12 @@ export class ComponentApiComponent implements OnInit {
         );
         this.http.get<ApiDeclaration[]>(apiUrl).subscribe({
             next: (data) => {
-                this.apiDeclarations = data;
-                this.ngZone.onStable.pipe(take(1)).subscribe(() => {
-                    this.ngZone.run(() => {
-                        if (this.elementRef.nativeElement) {
-                            this.tocService.generateToc(this.elementRef.nativeElement);
-                        }
+                this.apiDeclarations.set(data);
+                if (this.elementRef.nativeElement) {
+                    setTimeout(() => {
+                        this.tocService.generateToc(this.elementRef.nativeElement);
                     });
-                });
+                }
             },
         });
     }

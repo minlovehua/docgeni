@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostBinding, NgModuleFactory, Type, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding, NgModuleFactory, Type, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationService, GlobalContext } from '../../services/public-api';
@@ -19,6 +19,10 @@ export class ChannelComponent implements OnInit, OnDestroy {
     private route = inject(ActivatedRoute);
     public navigationService = inject(NavigationService);
     public global = inject(GlobalContext);
+
+    menus = computed(() => {
+        return this.navigationService.channel?.items || [];
+    });
 
     constructor() {}
 
