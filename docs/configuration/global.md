@@ -74,7 +74,7 @@ Markdown 文档所在目录。Docgeni 会扫描其中的文件夹与 Markdown �
 
 站点构建产物输出目录。若已配置 `siteProjectName`，则以自定义站点的输出目录为准，此项不生效。
 
-## renderMode <label>2.8.0+</label>
+## renderMode <label>3.0.0+</label>
 
 - 类型：`csr` | `ssg` | `ssr`
 - 默认：`csr`

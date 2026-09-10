@@ -118,7 +118,7 @@ Set `isExternal: true` and use a full URL in `path`:
 }
 ```
 
-### Dropdown navigation <label>2.8.0+</label>
+### Dropdown navigation <label>3.0.0+</label>
 
 To group several top-level entries under one navbar item, set the parent `path` to an empty string and list children in `items`. The navbar treats this as a dropdown: the parent is display-only with no route; each child keeps its own route.
 

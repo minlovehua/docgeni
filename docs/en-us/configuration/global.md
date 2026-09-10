@@ -74,7 +74,7 @@ The generated site workspace directory. Docgeni syncs component examples and doc
 
 The build output directory of the site. If `siteProjectName` is set, the custom site's output directory takes precedence and this option is ignored.
 
-## renderMode <label>2.8.0+</label>
+## renderMode <label>3.0.0+</label>
 
 - Type: `csr` | `ssg` | `ssr`
 - Default: `csr`
